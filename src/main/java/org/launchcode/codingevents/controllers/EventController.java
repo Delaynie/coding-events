@@ -27,9 +27,9 @@ public class EventController {
     private EventCategoryRepository eventCategoryRepository;
 
     @GetMapping
-    public String displayAllEvents(@RequestParam(required = false) Integer categoryId, Model model) {
+    public String displayEvents(@RequestParam(required = false) Integer categoryId, Model model) {
 
-        if(categoryId == null) {
+        if (categoryId == null) {
             model.addAttribute("title", "All Events");
             model.addAttribute("events", eventRepository.findAll());
         } else {
@@ -42,6 +42,7 @@ public class EventController {
                 model.addAttribute("events", category.getEvents());
             }
         }
+
         return "events/index";
     }
 
@@ -82,6 +83,22 @@ public class EventController {
         }
 
         return "redirect:";
+    }
+
+    @GetMapping("detail")
+    public String displayEventDetails(@RequestParam Integer eventId, Model model) {
+
+        Optional<Event> result = eventRepository.findById(eventId);
+
+        if (result.isEmpty()) {
+            model.addAttribute("title", "Invalid Event ID: " + eventId);
+        } else {
+            Event event = result.get();
+            model.addAttribute("title", event.getName() + " Details");
+            model.addAttribute("event", event);
+        }
+
+        return "events/detail";
     }
 
 }
